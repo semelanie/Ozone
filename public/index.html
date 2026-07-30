@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ozone Unit — Ministry of Environment, Climate, Energy and Natural Resources | Seychelles</title>
+<meta name="description" content="Official information hub for the Ozone Unit, MECENR Seychelles — Montreal Protocol compliance, RAC sector resources, reports, and confidential reporting." />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- React (no-build, in-browser) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+
+<style>
+  :root{
+    --navy:#12213B;
+    --navy-2:#1B2E52;
+    --teal:#0E8388;
+    --teal-light:#59B7B0;
+    --gold:#F2B441;
+    --report:#9C3B3B;
+    --bg:#F5F9FA;
+    --card:#FFFFFF;
+    --ink:#152238;
+    --muted:#5B6B7A;
+    --line:#E1E9EC;
+    --radius:14px;
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Inter',sans-serif; line-height:1.55; font-size:16px;
+  }
+  h1,h2,h3,.display{
+    font-family:'Space Grotesk',sans-serif; letter-spacing:-0.01em; color:var(--navy); margin:0 0 0.5em;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace; letter-spacing:0.02em;}
+  a{color:inherit;}
+  img{max-width:100%; display:block;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px;}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:999px;
+    font-weight:600; font-size:15px; text-decoration:none; border:1.5px solid transparent; cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn-primary{background:var(--teal); color:#fff; box-shadow:0 6px 18px rgba(14,131,136,.28);}
+  .btn-ghost{background:transparent; border-color:rgba(255,255,255,.55); color:#fff;}
+  .btn-report{background:var(--report); color:#fff; box-shadow:0 6px 18px rgba(156,59,59,.30);}
+  .btn-dark{background:var(--navy); color:#fff;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace; text-transform:uppercase; font-size:12.5px;
+    letter-spacing:.14em; color:var(--teal); font-weight:500; margin-bottom:10px; display:block;
+  }
+
+  /* ---------- Skip link / accessibility ---------- */
+  .skip-link{
+    position:absolute; left:-999px; top:auto; background:var(--navy); color:#fff; padding:10px 16px;
+    z-index:999; border-radius:0 0 8px 0;
+  }
+  .skip-link:focus{left:0; top:0;}
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:3px solid var(--gold); outline-offset:2px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+
+  /* ---------- Top utility bar ---------- */
+  .utility-bar{background:var(--navy); color:#cfe0e6; font-size:13px;}
+  .utility-bar .wrap{display:flex; justify-content:space-between; align-items:center; padding:6px 24px; flex-wrap:wrap; gap:6px;}
+  .utility-bar a{text-decoration:none; opacity:.9;}
+  .utility-bar a:hover{opacity:1; text-decoration:underline;}
+
+  /* ---------- Header / nav ---------- */
+  header.site{
+    background:rgba(255,255,255,.92); backdrop-filter:blur(8px);
+    position:sticky; top:0; z-index:50; border-bottom:1px solid var(--line);
+  }
+  header.site .wrap{display:flex; align-items:center; justify-content:space-between; padding:14px 24px;}
+  .brand{display:flex; align-items:center; gap:12px; text-decoration:none;}
+  .brand-mark{width:42px; height:42px;}
+  .brand-text .k1{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; color:var(--muted); text-transform:uppercase;}
+  .brand-text .k2{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:18px; color:var(--navy); line-height:1.1;}
+  nav.main{display:flex; gap:26px; align-items:center;}
+  nav.main a{text-decoration:none; font-weight:500; font-size:14.5px; color:var(--ink); position:relative; padding:4px 0;}
+  nav.main a::after{content:"";position:absolute; left:0; bottom:-3px; width:0; height:2px; background:var(--teal); transition:width .2s;}
+  nav.main a:hover::after{width:100%;}
+  .nav-toggle{display:none; background:none; border:none; font-size:26px; color:var(--navy); cursor:pointer;}
+
+  @media (max-width:900px){
+    nav.main{position:fixed; top:0; right:-100%; height:100vh; width:78%; max-width:320px; background:#fff;
+      flex-direction:column; align-items:flex-start; padding:90px 28px; gap:22px; transition:right .25s ease; box-shadow:-10px 0 30px rgba(0,0,0,.12);}
+    nav.main.open{right:0;}
+    .nav-toggle{display:block;}
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative; overflow:hidden; background:linear-gradient(180deg,#0B1B33 0%, #12335A 46%, #0E8388 100%);}
+  .hero .wrap{position:relative; z-index:2; padding:74px 24px 0; display:grid; grid-template-columns:1.05fr .95fr; gap:40px; align-items:center;}
+  @media (max-width:900px){ .hero .wrap{grid-template-columns:1fr; padding-top:48px;} }
+  .hero h1{color:#fff; font-size:clamp(30px,4.2vw,50px); line-height:1.08; margin-bottom:18px;}
+  .hero p.lede{color:#DDEEF0; font-size:17px; max-width:46ch; margin-bottom:28px;}
+  .hero .cta-row{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:56px;}
+  .atmosphere{position:relative; height:380px;}
+  .atmosphere svg{width:100%; height:100%;}
+  @media (max-width:900px){ .atmosphere{height:260px;} }
+  @media (max-width:480px){ .atmosphere{height:210px;} }
+  .ozone-arc{animation:glow 4.5s ease-in-out infinite;}
+  @keyframes glow{
+    0%,100%{ filter:drop-shadow(0 0 2px rgba(242,180,65,.35)); opacity:.85; }
+    50%{ filter:drop-shadow(0 0 14px rgba(242,180,65,.85)); opacity:1; }
+  }
+  .uv-ray{ animation:ray 4.5s ease-in-out infinite; transform-origin:center; }
+  @keyframes ray{ 0%,100%{opacity:.15;} 50%{opacity:.65;} }
+
+  .stat-strip{background:rgba(255,255,255,.08); border-top:1px solid rgba(255,255,255,.18); position:relative; z-index:2;}
+  .stat-strip .wrap{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; padding:22px 24px;}
+  @media (max-width:700px){ .stat-strip .wrap{grid-template-columns:repeat(2,1fr);} }
+  .stat-strip .num{font-family:'Space Grotesk',sans-serif; font-size:26px; color:#fff; font-weight:600;}
+  .stat-strip .lbl{font-size:12.5px; color:#BFE1E3; font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- Section shell ---------- */
+  section{padding:76px 0;}
+  .section-head{max-width:640px; margin-bottom:40px;}
+  .section-head.center{margin-left:auto; margin-right:auto; text-align:center;}
+  .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  .grid-2{display:grid; grid-template-columns:1.1fr .9fr; gap:48px; align-items:center;}
+  @media (max-width:860px){ .grid-3{grid-template-columns:1fr;} .grid-2{grid-template-columns:1fr;} }
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:26px; transition:box-shadow .2s, transform .2s;}
+  .card:hover{box-shadow:0 14px 30px rgba(18,33,59,.08); transform:translateY(-2px);}
+  .card .icon{width:40px; height:40px; margin-bottom:16px;}
+  .card h3{font-size:18px; margin-bottom:8px;}
+  .card p{color:var(--muted); font-size:14.5px; margin:0;}
+
+  /* About / Protocol section */
+  .panel-alt{background:#EEF5F5;}
+  .timeline{border-left:2px solid var(--teal-light); padding-left:22px; display:flex; flex-direction:column; gap:22px;}
+  .timeline .yr{font-family:'IBM Plex Mono',monospace; color:var(--teal); font-size:13px; font-weight:500;}
+  .timeline .ttl{font-weight:600; margin:2px 0 4px;}
+  .timeline .desc{color:var(--muted); font-size:14.5px;}
+
+  /* RAC resources */
+  .rac-tag{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11.5px; padding:4px 10px;
+    border-radius:999px; background:#FCEFD8; color:#8A5B12; margin-right:6px; margin-bottom:6px;
+  }
+
+  /* Downloads / reports */
+  .doc-toolbar{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:22px;}
+  .doc-toolbar input, .doc-toolbar select{
+    padding:11px 14px; border-radius:10px; border:1px solid var(--line); font-family:'Inter'; font-size:14px; background:#fff;
+  }
+  .doc-toolbar input{flex:1; min-width:220px;}
+  .doc-row{
+    display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border:1px solid var(--line);
+    border-radius:12px; background:#fff; margin-bottom:10px;
+  }
+  .doc-row .meta{font-size:12.5px; color:var(--muted); font-family:'IBM Plex Mono',monospace;}
+  .doc-row .name{font-weight:600; font-size:15px;}
+  .doc-row .dl{font-size:13px; font-weight:600; color:var(--teal); text-decoration:none;}
+  .badge-new{background:var(--gold); color:#4A3200; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px; margin-left:8px; vertical-align:middle;}
+
+  /* News carousel */
+  .news-card{border-radius:var(--radius); overflow:hidden; border:1px solid var(--line); background:#fff;}
+  .news-card .img{height:150px; background:linear-gradient(135deg,var(--teal),var(--navy-2));}
+  .news-card .body{padding:18px;}
+  .news-card .date{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--muted);}
+  .news-card h4{margin:6px 0 8px; font-size:16px; font-family:'Space Grotesk',sans-serif; color:var(--navy);}
+  .carousel-dots{display:flex; gap:8px; justify-content:center; margin-top:22px;}
+  .carousel-dots button{width:9px; height:9px; border-radius:50%; border:none; background:var(--line); cursor:pointer; padding:0;}
+  .carousel-dots button.active{background:var(--teal); width:22px; border-radius:6px;}
+
+  /* Contact + forms */
+  .form-field{margin-bottom:16px;}
+  .form-field label{display:block; font-size:13.5px; font-weight:600; margin-bottom:6px;}
+  .form-field input, .form-field textarea{
+    width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--line); font-family:'Inter'; font-size:14.5px; background:#fcfdfe;
+  }
+  .form-field textarea{min-height:110px; resize:vertical;}
+  .form-note{font-size:12.5px; color:var(--muted); margin-top:6px;}
+  .success-msg{background:#E7F6EE; color:#1C6B45; padding:14px 16px; border-radius:10px; font-size:14px; margin-top:14px;}
+
+  /* Confidential reporting */
+  .report-section{background:var(--navy); color:#EAF1F3;}
+  .report-section .eyebrow{color:var(--gold);}
+  .report-section h2{color:#fff;}
+  .report-section p.desc{color:#C4D6DA; max-width:56ch;}
+  .report-card{background:#152B4C; border:1px solid rgba(255,255,255,.12); border-radius:var(--radius); padding:32px;}
+  .lock-row{display:flex; gap:10px; align-items:center; margin-bottom:18px; font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:#9FD3D0;}
+  .report-card .form-field input, .report-card .form-field textarea{background:#0F2340; border-color:rgba(255,255,255,.16); color:#fff;}
+  .report-card .form-field label{color:#DCE9EB;}
+  .anon-toggle{display:flex; align-items:center; gap:10px; margin-bottom:18px; font-size:14px;}
+
+  /* Search */
+  .search-wrap{position:relative; max-width:420px;}
+  .search-wrap input{width:100%; padding:12px 44px 12px 16px; border-radius:999px; border:1.5px solid var(--line); font-family:'Inter'; font-size:14.5px;}
+  .search-results{position:absolute; top:calc(100% + 8px); left:0; right:0; background:#fff; border:1px solid var(--line);
+    border-radius:12px; box-shadow:0 16px 30px rgba(0,0,0,.12); overflow:hidden; z-index:40;}
+  .search-results .item{padding:12px 16px; font-size:14px; border-bottom:1px solid var(--line); cursor:pointer;}
+  .search-results .item:last-child{border-bottom:none;}
+  .search-results .item:hover{background:#F2F8F8;}
+  .search-results .tag{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--teal); text-transform:uppercase; margin-right:8px;}
+
+  /* Footer */
+  footer{background:#0C1930; color:#B9CCD1; padding:56px 0 26px;}
+  footer .wrap{display:grid; grid-template-columns:1.2fr 1fr 1fr 1fr; gap:36px;}
+  @media (max-width:800px){ footer .wrap{grid-template-columns:1fr 1fr;} }
+  footer h5{color:#fff; font-family:'Space Grotesk',sans-serif; font-size:15px; margin:0 0 14px;}
+  footer a{display:block; text-decoration:none; font-size:13.5px; margin-bottom:9px; color:#AFC4C9;}
+  footer a:hover{color:#fff;}
+  .footer-bottom{border-top:1px solid rgba(255,255,255,.1); margin-top:36px; padding-top:20px; font-size:12.5px; color:#7E97A0; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+
+  /* Cookie banner */
+  .cookie-banner{
+    position:fixed; bottom:16px; left:16px; right:16px; max-width:560px; margin:0 auto; background:#fff;
+    border:1px solid var(--line); border-radius:14px; padding:18px 20px; box-shadow:0 20px 40px rgba(0,0,0,.15);
+    display:flex; gap:14px; align-items:center; z-index:200; flex-wrap:wrap;
+  }
+  .cookie-banner p{margin:0; font-size:13.5px; color:var(--muted); flex:1; min-width:220px;}
+  .cookie-banner .row{display:flex; gap:10px;}
+
+  /* Feedback tab */
+  .feedback-tab{
+    position:fixed; right:0; top:52%; transform:translateY(-50%) rotate(180deg); writing-mode:vertical-rl;
+    background:var(--teal); color:#fff; padding:14px 10px; border-radius:10px 0 0 10px; font-weight:600; font-size:13px;
+    cursor:pointer; z-index:150; letter-spacing:.04em; border:none;
+  }
+  .feedback-panel{
+    position:fixed; right:16px; bottom:16px; width:300px; background:#fff; border:1px solid var(--line); border-radius:14px;
+    padding:20px; box-shadow:0 20px 40px rgba(0,0,0,.18); z-index:210;
+  }
+  .feedback-panel h4{margin:0 0 10px; font-size:15px;}
+  .feedback-panel textarea{width:100%; min-height:80px; border-radius:10px; border:1px solid var(--line); padding:10px; font-family:'Inter'; margin-bottom:10px;}
+
+  /* =========================================================
+     Responsive refinements — tighter breakpoints, touch targets,
+     and a dedicated small-phone pass (<=480px)
+     ========================================================= */
+
+  /* Comfortable tap targets everywhere on touch devices */
+  @media (max-width:900px){
+    .btn, nav.main a{ min-height:44px; }
+    nav.main a{ display:flex; align-items:center; font-size:16px; }
+    .nav-toggle{ min-width:44px; min-height:44px; }
+  }
+
+  /* General spacing/scale pass for tablets and phones */
+  @media (max-width:860px){
+    section{ padding:52px 0; }
+    .section-head{ margin-bottom:28px; }
+  }
+
+  @media (max-width:700px){
+    .utility-bar .wrap{ font-size:12px; justify-content:center; text-align:center; }
+    .hero .cta-row{ margin-bottom:36px; }
+    .hero .cta-row .btn{ flex:1 1 auto; justify-content:center; }
+    .doc-toolbar{ flex-direction:column; }
+    .doc-toolbar input, .doc-toolbar select{ width:100%; min-width:0; }
+    .doc-row{ flex-direction:column; align-items:flex-start; gap:10px; }
+    .doc-row .dl{ align-self:flex-end; }
+    footer .wrap{ grid-template-columns:1fr; text-align:left; }
+  }
+
+  /* Small phones: tighten type scale, hide the least essential utility text,
+     collapse the feedback tab to a compact round button so it never blocks content */
+  @media (max-width:480px){
+    body{ font-size:15px; }
+    .wrap{ padding:0 16px; }
+    .hero .wrap{ padding-left:16px; padding-right:16px; }
+    .hero p.lede{ font-size:15.5px; }
+    .stat-strip .wrap{ padding:16px; gap:12px; }
+    .stat-strip .num{ font-size:21px; }
+    section{ padding:40px 0; }
+    .card{ padding:20px; }
+    .report-card{ padding:22px; }
+
+    .feedback-tab{
+      writing-mode:initial; transform:none; top:auto; bottom:16px; right:16px;
+      width:52px; height:52px; border-radius:50%; padding:0; display:flex;
+      align-items:center; justify-content:center; font-size:0;
+    }
+    .feedback-tab::after{ content:"💬"; font-size:22px; }
+    .feedback-panel{ right:12px; left:12px; width:auto; bottom:78px; }
+    .cookie-banner{ left:12px; right:12px; bottom:12px; padding:16px; }
+  }
+
+  /* Larger desktop/wide-screen polish: cap line length so text never
+     stretches uncomfortably wide on big monitors */
+  @media (min-width:1400px){
+    .hero p.lede{ max-width:50ch; }
+    .section-head:not(.center){ max-width:680px; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="utility-bar">
+  <div class="wrap">
+    <span>Republic of Seychelles · Ministry of Environment, Climate, Energy and Natural Resources</span>
+    <a href="#contact">+248 272 2111 · info@env.gov.sc</a>
+  </div>
+</div>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <svg class="brand-mark" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="24" cy="24" r="22" fill="#12213B"/>
+        <path d="M6 27c6-10 12-14 18-14s12 4 18 14" stroke="#F2B441" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+        <path d="M9 32c5-8 10-11 15-11s10 3 15 11" stroke="#59B7B0" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <circle cx="24" cy="17" r="3.4" fill="#F2B441"/>
+      </svg>
+      <span class="brand-text">
+        <span class="k1">MECENR · Ozone Unit</span>
+        <span class="k2">Ozone &amp; RAC Programme</span>
+      </span>
+    </a>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
+    <nav class="main" id="mainNav">
+      <a href="#about">About the Unit</a>
+      <a href="#protocol">Montreal Protocol</a>
+      <a href="#rac">RAC Sector</a>
+      <a href="#reports">Reports &amp; Publications</a>
+      <a href="#news">News</a>
+      <a href="#contact">Contact</a>
+      <a class="btn btn-report" href="#report" style="padding:9px 18px;">Report a Concern</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section class="hero" id="top" style="padding-bottom:0;">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow" style="color:#8FE3D9;">Protecting Seychelles' Skies Since 1992</span>
+        <h1>Guarding the ozone layer, one refrigerant at a time.</h1>
+        <p class="lede">The Ozone Unit leads Seychelles' compliance with the Montreal Protocol — regulating ozone-depleting substances, supporting the RAC sector, and phasing down HFCs under the Kigali Amendment.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#protocol">Learn About the Protocol</a>
+          <a class="btn btn-ghost" href="#report">Report Illegal Refrigerant</a>
+        </div>
+      </div>
+      <div class="atmosphere" aria-hidden="true">
+        <svg viewBox="0 0 420 380" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="strato" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#1B3A63"/>
+              <stop offset="1" stop-color="#12335A"/>
+            </linearGradient>
+            <linearGradient id="ocean" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#0E8388"/>
+              <stop offset="1" stop-color="#0A5F63"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="420" height="230" fill="url(#strato)"/>
+          <rect x="0" y="230" width="420" height="150" fill="url(#ocean)"/>
+          <!-- sun -->
+          <circle cx="350" cy="55" r="24" fill="#F2B441" opacity="0.95"/>
+          <!-- UV rays hitting the ozone arc -->
+          <g class="uv-ray">
+            <line x1="350" y1="79" x2="255" y2="150" stroke="#F2B441" stroke-width="2"/>
+            <line x1="330" y1="70" x2="220" y2="150" stroke="#F2B441" stroke-width="2"/>
+            <line x1="300" y1="65" x2="185" y2="152" stroke="#F2B441" stroke-width="2"/>
+          </g>
+          <!-- ozone shield arc -->
+          <path class="ozone-arc" d="M40 160 Q210 90 380 160" stroke="#F2B441" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M40 160 Q210 90 380 160" stroke="#ffffff" stroke-width="1" fill="none" opacity="0.4"/>
+          <!-- islands silhouette -->
+          <path d="M0 250 Q60 225 110 245 Q150 260 190 240 Q230 222 270 244 Q320 262 380 240 Q405 232 420 240 L420 380 L0 380 Z" fill="#083C40" opacity="0.55"/>
+          <path d="M0 262 Q70 244 130 258 Q190 272 250 252 Q320 230 420 260 L420 380 L0 380 Z" fill="#062A2D" opacity="0.7"/>
+        </svg>
+      </div>
+    </div>
+    <div class="stat-strip">
+      <div class="wrap">
+        <div><div class="num">1992</div><div class="lbl">SEYCHELLES RATIFIED THE PROTOCOL</div></div>
+        <div><div class="num">100%</div><div class="lbl">CFC PHASE-OUT ACHIEVED</div></div>
+        <div><div class="num">80%</div><div class="lbl">HFC REDUCTION TARGET BY 2045</div></div>
+        <div><div class="num">24/7</div><div class="lbl">CONFIDENTIAL REPORTING LINE</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="wrap">
+      <div class="grid-2">
+        <div>
+          <span class="eyebrow">About the Unit</span>
+          <h2>A small team with an outsized mandate.</h2>
+          <p style="color:var(--muted); margin-bottom:22px;">The Ozone Unit sits within the Department of Energy and Climate Change Affairs at MECENR. We license and monitor the import of ozone-depleting substances and HFCs, support refrigeration and air-conditioning (RAC) technicians with training and certification pathways, and represent Seychelles at regional and international ozone forums.</p>
+          <div class="grid-3" style="gap:16px;">
+            <div class="card" style="padding:18px;">
+              <h3 style="font-size:15px;">Licensing</h3>
+              <p>Import/export permits for controlled substances.</p>
+            </div>
+            <div class="card" style="padding:18px;">
+              <h3 style="font-size:15px;">RAC Support</h3>
+              <p>Technician certification and good-practice guidance.</p>
+            </div>
+            <div class="card" style="padding:18px;">
+              <h3 style="font-size:15px;">Compliance</h3>
+              <p>National reporting to the Montreal Protocol Secretariat.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="padding:32px;">
+          <h3 style="margin-bottom:18px;">Get in touch with the Unit</h3>
+          <p style="color:var(--muted); font-size:14.5px; margin-bottom:6px;">Botanical Gardens, Mont Fleuri, Mahé</p>
+          <p style="color:var(--muted); font-size:14.5px; margin-bottom:6px;">+248 272 2111</p>
+          <p style="color:var(--muted); font-size:14.5px; margin-bottom:18px;">info@env.gov.sc</p>
+          <a href="#contact" class="btn btn-dark" style="width:100%; justify-content:center;">Send a Message</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MONTREAL PROTOCOL -->
+  <section id="protocol" class="panel-alt">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Montreal Protocol &amp; Legislation</span>
+        <h2>From CFCs to the Kigali Amendment.</h2>
+        <p style="color:var(--muted);">Seychelles' ozone journey, and where our obligations stand today.</p>
+      </div>
+      <div class="grid-2">
+        <div class="timeline">
+          <div>
+            <div class="yr">1992</div>
+            <div class="ttl">Seychelles ratifies the Montreal Protocol</div>
+            <div class="desc">Formal commitment to phase out ozone-depleting substances.</div>
+          </div>
+          <div>
+            <div class="yr">2010</div>
+            <div class="ttl">CFCs fully phased out</div>
+            <div class="desc">National import of chlorofluorocarbons brought to zero.</div>
+          </div>
+          <div>
+            <div class="yr">2019</div>
+            <div class="ttl">Kigali Amendment ratified</div>
+            <div class="desc">Commitment to a phased reduction of HFCs, the current generation of refrigerants.</div>
+          </div>
+          <div>
+            <div class="yr">2024–2045</div>
+            <div class="ttl">HFC phase-down schedule</div>
+            <div class="desc">Staged reduction targets for importers, aligned with the Kigali baseline.</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Legislation &amp; guidance</h3>
+          <p style="color:var(--muted); font-size:14.5px; margin-bottom:16px;">Key instruments governing ozone-depleting substances and controlled refrigerants in Seychelles.</p>
+          <div class="doc-row"><div><div class="name">Environment Protection Act</div><div class="meta">PDF · Act</div></div><a class="dl" href="#">Download →</a></div>
+          <div class="doc-row"><div><div class="name">Ozone-Depleting Substances Regulations</div><div class="meta">PDF · Regulation</div></div><a class="dl" href="#">Download →</a></div>
+          <div class="doc-row"><div><div class="name">HFC Import Quota Guidance 2026</div><div class="meta">PDF · Guidance <span class="badge-new">NEW</span></div></div><a class="dl" href="#">Download →</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RAC SECTOR -->
+  <section id="rac">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">RAC Sector Resources</span>
+        <h2>For refrigeration &amp; air-conditioning technicians.</h2>
+        <p style="color:var(--muted);">Certification pathways, permitted refrigerants, and safe-handling guidance for the sector that works with controlled substances daily.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Technician Certification</h3>
+          <p>Steps to register and certify as a licensed RAC technician in Seychelles.</p>
+          <div style="margin-top:14px;"><span class="rac-tag">Certification</span><span class="rac-tag">Training</span></div>
+        </div>
+        <div class="card">
+          <h3>Permitted Refrigerants</h3>
+          <p>Current list of approved refrigerant classes and import restrictions.</p>
+          <div style="margin-top:14px;"><span class="rac-tag">Compliance</span><span class="rac-tag">Import</span></div>
+        </div>
+        <div class="card">
+          <h3>Safe Handling Guidance</h3>
+          <p>Recovery, recycling, and safe disposal practices for used refrigerants.</p>
+          <div style="margin-top:14px;"><span class="rac-tag">Best Practice</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REPORTS / DOWNLOAD MANAGER -->
+  <section id="reports" class="panel-alt">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Reports &amp; Publications</span>
+        <h2>Central Download Manager</h2>
+        <p style="color:var(--muted);">Search and filter every public document the Unit has published.</p>
+      </div>
+      <div id="downloadManagerRoot"></div>
+    </div>
+  </section>
+
+  <!-- NEWS CAROUSEL -->
+  <section id="news">
+    <div class="wrap">
+      <div class="section-head center">
+        <span class="eyebrow">News &amp; Updates</span>
+        <h2>What's happening at the Unit</h2>
+      </div>
+      <div id="newsCarouselRoot"></div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="panel-alt">
+    <div class="wrap">
+      <div class="grid-2">
+        <div>
+          <span class="eyebrow">Contact &amp; Active Search</span>
+          <h2>Search the site, or send us a message.</h2>
+          <p style="color:var(--muted); margin-bottom:20px;">Looking for something specific? Start typing below.</p>
+          <div id="searchRoot"></div>
+          <div style="margin-top:34px;">
+            <h3 style="font-size:17px;">Visit us</h3>
+            <p style="color:var(--muted); font-size:14.5px;">Department of Energy &amp; Climate Change Affairs<br/>Botanical Gardens, Mont Fleuri, Mahé, Seychelles</p>
+          </div>
+        </div>
+        <div class="card" style="padding:32px;">
+          <h3 style="margin-bottom:18px;">Contact Form</h3>
+          <div id="contactFormRoot"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONFIDENTIAL REPORTING -->
+  <section id="report" class="report-section">
+    <div class="wrap">
+      <div class="grid-2">
+        <div>
+          <span class="eyebrow">Confidential Reporting</span>
+          <h2>See an illegal refrigerant or ozone-depleting substance?</h2>
+          <p class="desc">Report it directly and confidentially to the Ozone Unit. Submissions are encrypted and reviewed only by named Unit staff — you may also choose to remain anonymous.</p>
+          <div class="lock-row">🔒 TLS-encrypted submission · Restricted-access review only</div>
+        </div>
+        <div class="report-card">
+          <div id="reportFormRoot"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <h5>Ozone Unit</h5>
+      <p style="color:#9FB6BC; font-size:13.5px; max-width:32ch;">Department of Energy &amp; Climate Change Affairs, Ministry of Environment, Climate, Energy and Natural Resources, Seychelles.</p>
+    </div>
+    <div>
+      <h5>Explore</h5>
+      <a href="#about">About the Unit</a>
+      <a href="#protocol">Montreal Protocol</a>
+      <a href="#rac">RAC Sector</a>
+      <a href="#reports">Reports</a>
+    </div>
+    <div>
+      <h5>Connect</h5>
+      <a href="#news">News</a>
+      <a href="#contact">Contact</a>
+      <a href="#report">Report a Concern</a>
+    </div>
+    <div>
+      <h5>Legal</h5>
+      <a href="#">Cookie Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Accessibility</a>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© 2026 Ministry of Environment, Climate, Energy and Natural Resources · Ozone Unit</span>
+    <span>Website by Databytes Consultancy Pty Ltd</span>
+  </div>
+</footer>
+
+<!-- Feedback widget (vanilla JS) -->
+<button class="feedback-tab" id="feedbackTab">Feedback</button>
+<div class="feedback-panel" id="feedbackPanel" style="display:none;">
+  <h4>Quick feedback</h4>
+  <textarea id="feedbackText" placeholder="Tell us what you think of the site..."></textarea>
+  <div style="display:flex; gap:8px;">
+    <button class="btn btn-primary" style="flex:1; justify-content:center; padding:9px;" id="feedbackSend">Send</button>
+    <button class="btn" style="background:#eee;" id="feedbackClose">Close</button>
+  </div>
+  <div id="feedbackSuccess"></div>
+</div>
+
+<!-- Cookie banner (vanilla JS) -->
+<div class="cookie-banner" id="cookieBanner" style="display:none;">
+  <p>We use cookies to understand site traffic and improve your experience. See our <a href="#" style="color:var(--teal); font-weight:600;">Cookie Policy</a>.</p>
+  <div class="row">
+    <button class="btn" style="background:#eee; padding:9px 16px;" id="cookieDecline">Decline</button>
+    <button class="btn btn-primary" style="padding:9px 16px;" id="cookieAccept">Accept</button>
+  </div>
+</div>
+
+<script>
+  // Nav toggle
+  document.getElementById('navToggle').addEventListener('click', function(){
+    document.getElementById('mainNav').classList.toggle('open');
+  });
+  document.querySelectorAll('nav.main a').forEach(function(a){
+    a.addEventListener('click', function(){ document.getElementById('mainNav').classList.remove('open'); });
+  });
+
+  // Cookie banner
+  (function(){
+    var banner = document.getElementById('cookieBanner');
+    if(!localStorage.getItem('ozoneUnitCookieChoice')){
+      setTimeout(function(){ banner.style.display = 'flex'; }, 600);
+    }
+    function choose(v){
+      try{ localStorage.setItem('ozoneUnitCookieChoice', v); }catch(e){}
+      banner.style.display = 'none';
+    }
+    document.getElementById('cookieAccept').addEventListener('click', function(){ choose('accepted'); });
+    document.getElementById('cookieDecline').addEventListener('click', function(){ choose('declined'); });
+  })();
+
+  // Feedback widget
+  (function(){
+    var tab = document.getElementById('feedbackTab');
+    var panel = document.getElementById('feedbackPanel');
+    tab.addEventListener('click', function(){ panel.style.display = panel.style.display === 'none' ? 'block' : 'none'; });
+    document.getElementById('feedbackClose').addEventListener('click', function(){ panel.style.display = 'none'; });
+    document.getElementById('feedbackSend').addEventListener('click', function(){
+      var txt = document.getElementById('feedbackText');
+      var successEl = document.getElementById('feedbackSuccess');
+      if(txt.value.trim().length === 0) return;
+      fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: txt.value.trim(), pageUrl: window.location.href })
+      })
+        .then(function(r){ if(!r.ok) throw new Error('failed'); return r.json(); })
+        .then(function(){
+          successEl.innerHTML = '<div class="success-msg" style="margin-top:10px;">Thanks — your feedback was recorded.</div>';
+          txt.value = '';
+        })
+        .catch(function(){
+          successEl.innerHTML = '<div class="success-msg" style="margin-top:10px; background:#FBEAEA; color:#9C3B3B;">Could not send feedback — please try again.</div>';
+        });
+    });
+  })();
+</script>
+
+<script type="text/babel">
+const { useState, useMemo, useEffect, useRef } = React;
+
+/* ---------------- Shared helpers ---------------- */
+function fmtDate(iso){
+  try {
+    // Postgres (via node's pg driver) returns full ISO 8601 strings already
+    // (e.g. "2026-07-30T15:31:03.369Z") — parse directly rather than
+    // re-appending a timezone marker.
+    return new Date(iso).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+  } catch(e){ return iso; }
+}
+
+/* ---------------- News Carousel ---------------- */
+function NewsCarousel(){
+  const [items, setItems] = useState([]);
+  const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/news').then(r => r.json()).then(data => { setItems(data); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    if (items.length === 0) return;
+    const t = setInterval(() => setIndex(i => (i + 1) % items.length), 5000);
+    return () => clearInterval(t);
+  }, [items.length]);
+
+  if (loading) return <p style={{color:'var(--muted)', textAlign:'center'}}>Loading news…</p>;
+  if (items.length === 0) return <p style={{color:'var(--muted)', textAlign:'center'}}>No news posted yet.</p>;
+
+  const visible = [0,1,2].filter(o => o < items.length).map(o => items[(index + o) % items.length]);
+  return (
+    <div>
+      <div className="grid-3">
+        {visible.map((n) => (
+          <div className="news-card" key={n.id}>
+            <div className="img"></div>
+            <div className="body">
+              <div className="date">{fmtDate(n.published_at)} · {n.tag}</div>
+              <h4>{n.title}</h4>
+              <a href="#" style={{fontSize:'13.5px', fontWeight:600, color:'var(--teal)', textDecoration:'none'}}>Read more →</a>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="carousel-dots">
+        {items.map((it, i) => (
+          <button key={it.id} className={i === index ? 'active' : ''} onClick={() => setIndex(i)} aria-label={"Go to slide " + (i+1)}></button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- Download Manager ---------------- */
+function DownloadManager(){
+  const [docs, setDocs] = useState([]);
+  const [recent, setRecent] = useState([]);
+  const [q, setQ] = useState("");
+  const [cat, setCat] = useState("All");
+  const [cats, setCats] = useState(["All"]);
+
+  function load(){
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (cat && cat !== 'All') params.set('category', cat);
+    fetch('/api/documents?' + params.toString()).then(r => r.json()).then(setDocs);
+  }
+
+  useEffect(() => {
+    fetch('/api/documents').then(r => r.json()).then(all => {
+      setCats(["All", ...Array.from(new Set(all.map(d => d.category)))]);
+    });
+    fetch('/api/documents/recent').then(r => r.json()).then(setRecent);
+  }, []);
+
+  useEffect(() => { load(); }, [q, cat]);
+
+  return (
+    <div>
+      <div className="doc-toolbar">
+        <input placeholder="Search documents by name..." value={q} onChange={e => setQ(e.target.value)} aria-label="Search documents" />
+        <select value={cat} onChange={e => setCat(e.target.value)} aria-label="Filter by category">
+          {cats.map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
+      </div>
+
+      <div className="grid-2" style={{alignItems:'flex-start'}}>
+        <div>
+          {docs.length === 0 && <p style={{color:'var(--muted)'}}>No documents match your search.</p>}
+          {docs.map((d) => (
+            <div className="doc-row" key={d.id}>
+              <div>
+                <div className="name">{d.name}{!!d.is_new && <span className="badge-new">NEW</span>}</div>
+                <div className="meta">{d.file_type} · {d.category} · Updated {fmtDate(d.updated_at)}</div>
+              </div>
+              <a className="dl" href={d.file_url}>Download →</a>
+            </div>
+          ))}
+        </div>
+        <div className="card">
+          <h3 style={{fontSize:'16px'}}>Recently Updated Reports</h3>
+          {recent.map((d,i) => (
+            <div key={d.id} style={{padding:'10px 0', borderBottom: i < recent.length - 1 ? '1px solid var(--line)' : 'none'}}>
+              <div style={{fontWeight:600, fontSize:'14px'}}>{d.name}</div>
+              <div className="meta">Updated {fmtDate(d.updated_at)}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- Active Search (type-ahead across docs + news) ---------------- */
+function ActiveSearch(){
+  const staticPages = [
+    { tag: "Page", label: "About the Ozone Unit" },
+    { tag: "Page", label: "Montreal Protocol & Legislation" },
+    { tag: "Page", label: "RAC Sector Resources" },
+    { tag: "Page", label: "Confidential Reporting" },
+  ];
+  const [q, setQ] = useState("");
+  const [results, setResults] = useState([]);
+
+  useEffect(() => {
+    if (q.length === 0) { setResults([]); return; }
+    const t = setTimeout(() => {
+      Promise.all([
+        fetch('/api/documents?q=' + encodeURIComponent(q)).then(r => r.json()),
+        fetch('/api/news').then(r => r.json()),
+      ]).then(([docs, news]) => {
+        const docResults = docs.map(d => ({ tag: 'Doc', label: d.name }));
+        const newsResults = news
+          .filter(n => n.title.toLowerCase().includes(q.toLowerCase()))
+          .map(n => ({ tag: 'News', label: n.title }));
+        const pageResults = staticPages.filter(p => p.label.toLowerCase().includes(q.toLowerCase()));
+        setResults([...pageResults, ...docResults, ...newsResults]);
+      });
+    }, 200); // debounce
+    return () => clearTimeout(t);
+  }, [q]);
+
+  return (
+    <div className="search-wrap">
+      <input placeholder="Search pages, documents, news..." value={q} onChange={e => setQ(e.target.value)} aria-label="Site search" />
+      {results.length > 0 && (
+        <div className="search-results">
+          {results.map((r,i) => (
+            <div className="item" key={i}><span className="tag">{r.tag}</span>{r.label}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------------- Contact Form ---------------- */
+function ContactForm(){
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [form, setForm] = useState({name:"", email:"", message:"", honeypot:""});
+
+  function submit(e){
+    e.preventDefault();
+    setError("");
+    if(!form.name || !form.email || !form.message) return;
+    setBusy(true);
+    fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    })
+      .then(async r => { if (!r.ok) throw new Error((await r.json()).error || 'Something went wrong.'); return r.json(); })
+      .then(() => setSent(true))
+      .catch(e => setError(e.message))
+      .finally(() => setBusy(false));
+  }
+
+  if(sent) return <div className="success-msg">Thanks, {form.name.split(' ')[0]} — your message has been received. We'll respond within 3 working days.</div>;
+  return (
+    <form onSubmit={submit}>
+      {/* honeypot field — hidden from real users, bots tend to fill every field */}
+      <input type="text" name="honeypot" value={form.honeypot} onChange={e=>setForm({...form, honeypot:e.target.value})}
+        style={{position:'absolute', left:'-9999px'}} tabIndex="-1" autoComplete="off" aria-hidden="true" />
+      <div className="form-field">
+        <label htmlFor="cf-name">Full name</label>
+        <input id="cf-name" value={form.name} onChange={e=>setForm({...form, name:e.target.value})} required />
+      </div>
+      <div className="form-field">
+        <label htmlFor="cf-email">Email address</label>
+        <input id="cf-email" type="email" value={form.email} onChange={e=>setForm({...form, email:e.target.value})} required />
+      </div>
+      <div className="form-field">
+        <label htmlFor="cf-msg">Message</label>
+        <textarea id="cf-msg" value={form.message} onChange={e=>setForm({...form, message:e.target.value})} required></textarea>
+      </div>
+      {error && <p style={{color:'var(--report)', fontSize:'13.5px', marginBottom:'12px'}}>{error}</p>}
+      <button className="btn btn-primary" style={{width:'100%', justifyContent:'center'}} type="submit" disabled={busy}>
+        {busy ? 'Sending…' : 'Send Message'}
+      </button>
+      <p className="form-note">Protected by spam-filtering. We never share your details with third parties.</p>
+    </form>
+  );
+}
+
+/* ---------------- Confidential Reporting Form ---------------- */
+function ReportForm(){
+  const [sent, setSent] = useState(false);
+  const [reference, setReference] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [anon, setAnon] = useState(true);
+  const [form, setForm] = useState({location:"", details:"", contact:""});
+
+  function submit(e){
+    e.preventDefault();
+    setError("");
+    if(!form.details) return;
+    setBusy(true);
+    fetch('/api/reports', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...form, isAnonymous: anon }),
+    })
+      .then(async r => { if (!r.ok) throw new Error((await r.json()).error || 'Something went wrong.'); return r.json(); })
+      .then(data => { setReference(data.reference); setSent(true); })
+      .catch(e => setError(e.message))
+      .finally(() => setBusy(false));
+  }
+
+  if(sent) return (
+    <div className="success-msg" style={{background:'#1E3B2E', color:'#B7E8C7'}}>
+      Your report has been submitted securely. Reference: <strong>{reference}</strong>. Thank you for helping protect Seychelles' ozone layer.
+    </div>
+  );
+  return (
+    <form onSubmit={submit}>
+      <div className="anon-toggle">
+        <input type="checkbox" id="anon" checked={anon} onChange={e=>setAnon(e.target.checked)} />
+        <label htmlFor="anon" style={{color:'#DCE9EB'}}>Submit anonymously</label>
+      </div>
+      <div className="form-field">
+        <label htmlFor="rf-loc">Location of incident</label>
+        <input id="rf-loc" value={form.location} onChange={e=>setForm({...form, location:e.target.value})} placeholder="e.g. Providence Industrial Estate" />
+      </div>
+      <div className="form-field">
+        <label htmlFor="rf-details">What did you see?</label>
+        <textarea id="rf-details" value={form.details} onChange={e=>setForm({...form, details:e.target.value})} required placeholder="Describe the substance, quantity, and circumstances if known."></textarea>
+      </div>
+      {!anon && (
+        <div className="form-field">
+          <label htmlFor="rf-contact">Your contact (optional, kept confidential)</label>
+          <input id="rf-contact" value={form.contact} onChange={e=>setForm({...form, contact:e.target.value})} />
+        </div>
+      )}
+      {error && <p style={{color:'#F4A6A6', fontSize:'13.5px', marginBottom:'12px'}}>{error}</p>}
+      <button className="btn btn-report" style={{width:'100%', justifyContent:'center'}} type="submit" disabled={busy}>
+        {busy ? 'Submitting…' : 'Submit Confidential Report'}
+      </button>
+    </form>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('newsCarouselRoot')).render(<NewsCarousel />);
+ReactDOM.createRoot(document.getElementById('downloadManagerRoot')).render(<DownloadManager />);
+ReactDOM.createRoot(document.getElementById('searchRoot')).render(<ActiveSearch />);
+ReactDOM.createRoot(document.getElementById('contactFormRoot')).render(<ContactForm />);
+ReactDOM.createRoot(document.getElementById('reportFormRoot')).render(<ReportForm />);
+</script>
+
+</body>
+</html>

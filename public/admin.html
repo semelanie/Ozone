@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Dashboard — Ozone Unit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+  :root{
+    --navy:#12213B; --teal:#0E8388; --teal-light:#59B7B0; --gold:#F2B441; --report:#9C3B3B;
+    --bg:#F5F9FA; --card:#FFFFFF; --ink:#152238; --muted:#5B6B7A; --line:#E1E9EC; --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; font-size:15px;}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif; color:var(--navy); margin:0 0 8px;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 24px;}
+  a{color:inherit;}
+  input, textarea, select{
+    padding:10px 12px; border-radius:8px; border:1px solid var(--line); font-family:'Inter'; font-size:14px; width:100%;
+  }
+  label{display:block; font-size:13px; font-weight:600; margin-bottom:5px;}
+  .field{margin-bottom:14px;}
+  button{
+    cursor:pointer; border:none; border-radius:999px; padding:10px 20px; font-weight:600; font-size:14px;
+  }
+  .btn-primary{background:var(--teal); color:#fff;}
+  .btn-ghost{background:#eef2f3; color:var(--ink);}
+  .btn-danger{background:var(--report); color:#fff;}
+  .btn-sm{padding:6px 14px; font-size:12.5px;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:22px; margin-bottom:18px;}
+  .login-shell{min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg,#0B1B33,#0E8388);}
+  .login-card{background:#fff; border-radius:16px; padding:38px; width:100%; max-width:380px; box-shadow:0 30px 60px rgba(0,0,0,.25);}
+  .error{background:#FBEAEA; color:var(--report); padding:10px 14px; border-radius:8px; font-size:13.5px; margin-bottom:14px;}
+  .success{background:#E7F6EE; color:#1C6B45; padding:10px 14px; border-radius:8px; font-size:13.5px; margin-bottom:14px;}
+  .topbar{background:var(--navy); color:#fff; padding:14px 0;}
+  .topbar .wrap{display:flex; justify-content:space-between; align-items:center;}
+  .topbar .who{font-size:13px; color:#B8D8DA;}
+  .tabs{display:flex; gap:6px; margin:22px 0; flex-wrap:wrap;}
+  .tab{padding:9px 16px; border-radius:999px; background:#eef2f3; font-size:13.5px; font-weight:600; cursor:pointer;}
+  .tab.active{background:var(--navy); color:#fff;}
+  table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  th, td{text-align:left; padding:10px 8px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{font-family:'IBM Plex Mono',monospace; font-size:11.5px; text-transform:uppercase; color:var(--muted);}
+  .pill{padding:3px 10px; border-radius:999px; font-size:11.5px; font-weight:600;}
+  .pill-new{background:#FCEFD8; color:#8A5B12;}
+  .pill-read{background:#E4EEF0; color:#3A5B60;}
+  .pill-archived{background:#eee; color:#888;}
+  .row-actions{display:flex; gap:6px; flex-wrap:wrap;}
+  .grid-form{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:700px){ .grid-form{grid-template-columns:1fr;} }
+  .muted{color:var(--muted); font-size:13px;}
+  .lock-note{font-size:12.5px; color:var(--muted); margin-top:8px;}
+
+  /* ---------- Responsive pass ---------- */
+  @media (max-width:760px){
+    .topbar .wrap{ flex-direction:column; align-items:flex-start; gap:8px; }
+    .tabs{ overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
+    .tab{ flex:0 0 auto; min-height:40px; display:flex; align-items:center; }
+    button{ min-height:42px; }
+    .card{ padding:16px; overflow-x:auto; }
+    table{ min-width:640px; }
+  }
+  @media (max-width:480px){
+    .wrap{ padding:0 16px; }
+    .login-card{ padding:26px; }
+    h2{ font-size:22px; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+function api(path, opts={}) {
+  return fetch(path, { credentials: 'include', headers: { 'Content-Type': 'application/json' }, ...opts })
+    .then(async r => {
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.error || 'Request failed.');
+      return data;
+    });
+}
+
+/* ---------------- Login ---------------- */
+function Login({ onLoggedIn }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  function submit(e) {
+    e.preventDefault();
+    setError(""); setBusy(true);
+    api('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) })
+      .then(user => onLoggedIn(user))
+      .catch(e => setError(e.message))
+      .finally(() => setBusy(false));
+  }
+
+  return (
+    <div className="login-shell">
+      <div className="login-card">
+        <h2 style={{marginBottom:4}}>Ozone Unit Admin</h2>
+        <p className="muted" style={{marginBottom:20}}>Sign in to manage site content and submissions.</p>
+        {error && <div className="error">{error}</div>}
+        <form onSubmit={submit}>
+          <div className="field">
+            <label htmlFor="email">Email</label>
+            <input id="email" type="email" value={email} onChange={e=>setEmail(e.target.value)} required autoFocus />
+          </div>
+          <div className="field">
+            <label htmlFor="password">Password</label>
+            <input id="password" type="password" value={password} onChange={e=>setPassword(e.target.value)} required />
+          </div>
+          <button className="btn-primary" style={{width:'100%'}} type="submit" disabled={busy}>{busy ? 'Signing in…' : 'Sign In'}</button>
+        </form>
+        <p className="lock-note">Accounts are seeded via <code>npm run seed</code> — see the README for the first-run admin password.</p>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- Contact submissions ---------------- */
+function ContactPanel(){
+  const [rows, setRows] = useState([]);
+  function load(){ api('/api/contact').then(setRows); }
+  useEffect(load, []);
+  function setStatus(id, status){ api('/api/contact/' + id, { method:'PATCH', body: JSON.stringify({status}) }).then(load); }
+  return (
+    <div className="card">
+      <h3>Contact Form Submissions</h3>
+      <table>
+        <thead><tr><th>From</th><th>Message</th><th>Received</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          {rows.map(r => (
+            <tr key={r.id}>
+              <td><strong>{r.name}</strong><br/><span className="muted">{r.email}</span></td>
+              <td style={{maxWidth:320}}>{r.message}</td>
+              <td className="mono muted">{r.created_at}</td>
+              <td><span className={"pill pill-" + r.status}>{r.status}</span></td>
+              <td>
+                <div className="row-actions">
+                  {r.status !== 'read' && <button className="btn-ghost btn-sm" onClick={()=>setStatus(r.id,'read')}>Mark read</button>}
+                  {r.status !== 'archived' && <button className="btn-ghost btn-sm" onClick={()=>setStatus(r.id,'archived')}>Archive</button>}
+                </div>
+              </td>
+            </tr>
+          ))}
+          {rows.length === 0 && <tr><td colSpan="5" className="muted">No submissions yet.</td></tr>}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/* ---------------- Feedback ---------------- */
+function FeedbackPanel(){
+  const [rows, setRows] = useState([]);
+  useEffect(() => { api('/api/feedback').then(setRows); }, []);
+  return (
+    <div className="card">
+      <h3>Site Feedback</h3>
+      <table>
+        <thead><tr><th>Message</th><th>Page</th><th>Received</th></tr></thead>
+        <tbody>
+          {rows.map(r => (
+            <tr key={r.id}>
+              <td style={{maxWidth:420}}>{r.message}</td>
+              <td className="muted" style={{maxWidth:200, wordBreak:'break-all'}}>{r.page_url || '—'}</td>
+              <td className="mono muted">{r.created_at}</td>
+            </tr>
+          ))}
+          {rows.length === 0 && <tr><td colSpan="3" className="muted">No feedback yet.</td></tr>}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/* ---------------- Confidential Reports (admin-only, decrypted server-side) ---------------- */
+function ReportsPanel(){
+  const [rows, setRows] = useState([]);
+  const [error, setError] = useState("");
+  function load(){ api('/api/reports').then(setRows).catch(e => setError(e.message)); }
+  useEffect(load, []);
+  function setStatus(id, status){ api('/api/reports/' + id, { method:'PATCH', body: JSON.stringify({status}) }).then(load); }
+  return (
+    <div className="card">
+      <h3>Confidential Reports</h3>
+      <p className="muted" style={{marginBottom:14}}>Decrypted for authorized review only. Access is logged.</p>
+      {error && <div className="error">{error}</div>}
+      <table>
+        <thead><tr><th>Ref</th><th>Location</th><th>Details</th><th>Contact</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          {rows.map(r => (
+            <tr key={r.id}>
+              <td className="mono">{r.reference}</td>
+              <td>{r.location || '—'}</td>
+              <td style={{maxWidth:320}}>{r.details}</td>
+              <td>{r.is_anonymous ? <em className="muted">Anonymous</em> : (r.contact || '—')}</td>
+              <td><span className="pill pill-new">{r.status}</span></td>
+              <td>
+                <select value={r.status} onChange={e => setStatus(r.id, e.target.value)}>
+                  <option value="submitted">Submitted</option>
+                  <option value="under_review">Under review</option>
+                  <option value="closed">Closed</option>
+                </select>
+              </td>
+            </tr>
+          ))}
+          {rows.length === 0 && <tr><td colSpan="6" className="muted">No reports yet.</td></tr>}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/* ---------------- Documents ---------------- */
+function DocumentsPanel(){
+  const [rows, setRows] = useState([]);
+  const [form, setForm] = useState({name:"", category:"Legislation", file_type:"PDF", file_url:"#", is_new:false});
+  function load(){ api('/api/documents').then(setRows); }
+  useEffect(load, []);
+  function add(e){
+    e.preventDefault();
+    api('/api/documents', { method:'POST', body: JSON.stringify(form) }).then(() => {
+      setForm({name:"", category:"Legislation", file_type:"PDF", file_url:"#", is_new:false});
+      load();
+    });
+  }
+  function del(id){ if(confirm('Delete this document?')) api('/api/documents/' + id, { method:'DELETE' }).then(load); }
+  return (
+    <div className="card">
+      <h3>Documents (Download Manager)</h3>
+      <form onSubmit={add} className="grid-form" style={{marginBottom:20}}>
+        <div className="field"><label>Name</label><input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} required/></div>
+        <div className="field"><label>Category</label>
+          <select value={form.category} onChange={e=>setForm({...form,category:e.target.value})}>
+            <option>Legislation</option><option>Guidance</option><option>Reports</option><option>Forms</option>
+          </select>
+        </div>
+        <div className="field"><label>File type</label>
+          <select value={form.file_type} onChange={e=>setForm({...form,file_type:e.target.value})}>
+            <option>PDF</option><option>DOCX</option><option>XLSX</option>
+          </select>
+        </div>
+        <div className="field"><label>File URL</label><input value={form.file_url} onChange={e=>setForm({...form,file_url:e.target.value})}/></div>
+        <div className="field" style={{display:'flex', alignItems:'center', gap:8}}>
+          <input type="checkbox" style={{width:'auto'}} checked={form.is_new} onChange={e=>setForm({...form,is_new:e.target.checked})} id="isnew"/>
+          <label htmlFor="isnew" style={{margin:0}}>Mark as "New"</label>
+        </div>
+        <div style={{alignSelf:'end'}}><button className="btn-primary" type="submit">Add Document</button></div>
+      </form>
+      <table>
+        <thead><tr><th>Name</th><th>Category</th><th>Type</th><th>Updated</th><th></th></tr></thead>
+        <tbody>
+          {rows.map(d => (
+            <tr key={d.id}>
+              <td>{d.name}{!!d.is_new && <span className="pill pill-new" style={{marginLeft:6}}>NEW</span>}</td>
+              <td>{d.category}</td>
+              <td>{d.file_type}</td>
+              <td className="mono muted">{d.updated_at}</td>
+              <td><button className="btn-danger btn-sm" onClick={()=>del(d.id)}>Delete</button></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/* ---------------- News ---------------- */
+function NewsPanel(){
+  const [rows, setRows] = useState([]);
+  const [form, setForm] = useState({title:"", tag:"Ministry News", body:""});
+  function load(){ api('/api/news').then(setRows); }
+  useEffect(load, []);
+  function add(e){
+    e.preventDefault();
+    api('/api/news', { method:'POST', body: JSON.stringify(form) }).then(() => {
+      setForm({title:"", tag:"Ministry News", body:""});
+      load();
+    });
+  }
+  function del(id){ if(confirm('Delete this news item?')) api('/api/news/' + id, { method:'DELETE' }).then(load); }
+  return (
+    <div className="card">
+      <h3>News Posts</h3>
+      <form onSubmit={add} style={{marginBottom:20}}>
+        <div className="grid-form">
+          <div className="field"><label>Title</label><input value={form.title} onChange={e=>setForm({...form,title:e.target.value})} required/></div>
+          <div className="field"><label>Tag</label>
+            <select value={form.tag} onChange={e=>setForm({...form,tag:e.target.value})}>
+              <option>Ministry News</option><option>Environment</option><option>International</option>
+            </select>
+          </div>
+        </div>
+        <div className="field"><label>Body</label><textarea rows="3" value={form.body} onChange={e=>setForm({...form,body:e.target.value})}></textarea></div>
+        <button className="btn-primary" type="submit">Publish</button>
+      </form>
+      <table>
+        <thead><tr><th>Title</th><th>Tag</th><th>Published</th><th></th></tr></thead>
+        <tbody>
+          {rows.map(n => (
+            <tr key={n.id}>
+              <td>{n.title}</td>
+              <td>{n.tag}</td>
+              <td className="mono muted">{n.published_at}</td>
+              <td><button className="btn-danger btn-sm" onClick={()=>del(n.id)}>Delete</button></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/* ---------------- Users (admin only) ---------------- */
+function UsersPanel({ currentUser }){
+  const [form, setForm] = useState({name:"", email:"", password:"", role:"editor"});
+  const [msg, setMsg] = useState(null);
+  function add(e){
+    e.preventDefault();
+    setMsg(null);
+    api('/api/auth/users', { method:'POST', body: JSON.stringify(form) })
+      .then(() => { setMsg({ok:true, text:'User created.'}); setForm({name:"", email:"", password:"", role:"editor"}); })
+      .catch(e => setMsg({ok:false, text:e.message}));
+  }
+  if (currentUser.role !== 'admin') return <div className="card"><p className="muted">Only administrators can manage user accounts.</p></div>;
+  return (
+    <div className="card">
+      <h3>Create Staff Account</h3>
+      {msg && <div className={msg.ok ? 'success' : 'error'}>{msg.text}</div>}
+      <form onSubmit={add} className="grid-form">
+        <div className="field"><label>Name</label><input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} required/></div>
+        <div className="field"><label>Email</label><input type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} required/></div>
+        <div className="field"><label>Temporary password (min 10 chars)</label><input type="password" value={form.password} onChange={e=>setForm({...form,password:e.target.value})} required minLength="10"/></div>
+        <div className="field"><label>Role</label>
+          <select value={form.role} onChange={e=>setForm({...form,role:e.target.value})}>
+            <option value="editor">Editor</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </form>
+      <button className="btn-primary" onClick={add}>Create Account</button>
+    </div>
+  );
+}
+
+/* ---------------- Dashboard shell ---------------- */
+function Dashboard({ user, onLogout }){
+  const tabs = [
+    { id:'contact', label:'Contact' },
+    { id:'feedback', label:'Feedback' },
+    { id:'reports', label:'Confidential Reports' },
+    { id:'documents', label:'Documents' },
+    { id:'news', label:'News' },
+    { id:'users', label:'Staff Accounts' },
+  ];
+  const [tab, setTab] = useState('contact');
+  return (
+    <div>
+      <div className="topbar">
+        <div className="wrap">
+          <div><strong>Ozone Unit — Admin</strong></div>
+          <div style={{display:'flex', alignItems:'center', gap:16}}>
+            <span className="who">{user.name} · {user.role}</span>
+            <button className="btn-ghost btn-sm" onClick={onLogout}>Sign out</button>
+          </div>
+        </div>
+      </div>
+      <div className="wrap">
+        <div className="tabs">
+          {tabs.map(t => (
+            <div key={t.id} className={"tab" + (tab === t.id ? ' active' : '')} onClick={() => setTab(t.id)}>{t.label}</div>
+          ))}
+        </div>
+        {tab === 'contact' && <ContactPanel />}
+        {tab === 'feedback' && <FeedbackPanel />}
+        {tab === 'reports' && <ReportsPanel />}
+        {tab === 'documents' && <DocumentsPanel />}
+        {tab === 'news' && <NewsPanel />}
+        {tab === 'users' && <UsersPanel currentUser={user} />}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- Root ---------------- */
+function App(){
+  const [user, setUser] = useState(null);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    api('/api/auth/me').then(setUser).catch(() => {}).finally(() => setChecked(true));
+  }, []);
+
+  function logout(){
+    api('/api/auth/logout', { method:'POST' }).finally(() => setUser(null));
+  }
+
+  if (!checked) return null;
+  if (!user) return <Login onLoggedIn={setUser} />;
+  return <Dashboard user={user} onLogout={logout} />;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
